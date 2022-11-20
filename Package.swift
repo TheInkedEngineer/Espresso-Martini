@@ -12,7 +12,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "App",
+            name: "Server",
             dependencies: [
                 .product(name: "Vapor", package: "vapor")
             ],
@@ -23,9 +23,9 @@ let package = Package(
                 .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release))
             ]
         ),
-        .executableTarget(name: "Run", dependencies: [.target(name: "App")]),
-        .testTarget(name: "AppTests", dependencies: [
-            .target(name: "App"),
+        .executableTarget(name: "Run", dependencies: [.target(name: "Server")]),
+        .testTarget(name: "ServerTests", dependencies: [
+            .target(name: "Server"),
             .product(name: "XCTVapor", package: "vapor"),
         ])
     ]
