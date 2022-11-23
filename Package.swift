@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "MockServer",
+    name: "EspressoMartini",
     platforms: [
        .macOS(.v12)
     ],
@@ -12,7 +12,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Server",
+            name: "MockServer",
             dependencies: [
                 .product(name: "Vapor", package: "vapor")
             ],
@@ -23,9 +23,9 @@ let package = Package(
                 .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release))
             ]
         ),
-        .executableTarget(name: "Run", dependencies: [.target(name: "Server")]),
-        .testTarget(name: "ServerTests", dependencies: [
-            .target(name: "Server"),
+        .executableTarget(name: "Run", dependencies: [.target(name: "MockServer")]),
+        .testTarget(name: "MockServerTests", dependencies: [
+            .target(name: "MockServer"),
             .product(name: "XCTVapor", package: "vapor"),
         ])
     ]

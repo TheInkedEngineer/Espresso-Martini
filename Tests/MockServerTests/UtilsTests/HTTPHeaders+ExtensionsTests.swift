@@ -1,7 +1,7 @@
 import XCTest
 import Vapor
 
-@testable import Server
+@testable import MockServer
 
 final class HTTPHeadersExtensionsTests: XCTestCase {
   func test_removingHeader() {

@@ -1,4 +1,4 @@
-@testable import Server
+@testable import MockServer
 import XCTVapor
 
 final class AppTests: XCTestCase {
