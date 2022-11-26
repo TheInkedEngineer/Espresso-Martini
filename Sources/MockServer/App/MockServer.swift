@@ -38,17 +38,15 @@ public class MockServer {
       registerRoutes(for: configuration.networkExchanges)
       try vaporApplication?.run()
     } catch {
-      print(error)
       // The most common error would be when we try to run the server on a PORT that is already used.
-//      throw Error.vapor(error: error)
+      throw Error.vapor(error: error)
     }
   }
   
   /// Shuts down the currently running instance of `Vapor`'s application, if any.
-  public func stop() throws {
+  public func stop() async throws {
     vaporApplication?.server.shutdown()
-    #warning("Check if this is the way to do it, or is there an async wait")
-    try vaporApplication?.server.onShutdown.wait()
+    try await vaporApplication?.server.onShutdown.get()
     vaporApplication = nil
   }
   
@@ -56,38 +54,53 @@ public class MockServer {
   /// then starts a new `Application` instance using the passed configuration.
   /// - Parameter configuration: An object conforming to `ServerConfigurationProvider`.
   /// - Throws: `ServerError.instanceAlreadyRunning` or a wrapped `Vapor` error.
-  public func restart(with configuration: ServerConfigurationProvider) throws {
-    try stop()
+  public func restart(with configuration: ServerConfigurationProvider) async throws {
+    try await stop()
     try start(using: configuration)
   }
   
-  /// Registers the route
+  /// Registers the routes that the Mock server should be able to intercept and respond to.
   private func registerRoutes(for networkExchanges: [NetworkExchange]) {
     networkExchanges.forEach { networkExchange in
       vaporApplication?
         .on(networkExchange.request.method, networkExchange.request.pathComponents) { [networkExchange] request async throws in
-          let byteBuffer: ByteBuffer? = await {
-            switch networkExchange.response.kind {
-              case .empty:
-                return nil
-                
-              case let .string(value):
-                return ByteBuffer(string: value)
-                
-              case let .data(value):
-                return ByteBuffer(data: value)
-                
-              case let .json(value, encoder):
-                guard let data = try? encoder.encode(value) else {
-                  return nil
-                }
-                
-                return ByteBuffer(data: data)
-                
-              case let .fileContent(pathToFile):
-                return try? await request.fileio.collectFile(at: pathToFile).get()
-            }
-          }()
+          // The bytes to return with the response.
+          let byteBuffer: ByteBuffer?
+          
+          switch networkExchange.response.kind {
+            case .empty:
+              byteBuffer = nil
+              
+            case let .string(value):
+              byteBuffer = ByteBuffer(string: value)
+              
+            case let .data(value):
+              byteBuffer = ByteBuffer(data: value)
+              
+            case let .json(value, encoder):
+              guard let data = try? encoder.encode(value) else {
+                // If we fail to encode the data, we just throw a server error.
+                return ClientResponse(
+                  status: .internalServerError,
+                  headers: networkExchange.response.headers.removing(name: "Content-Type"),
+                  body: nil
+                )
+              }
+              
+              byteBuffer = ByteBuffer(data: data)
+              
+            case let .fileContent(pathToFile):
+              // If we fail to find the file (most likely only reason for failure), we just throw a 404 error.
+              guard let content = try? await request.fileio.collectFile(at: pathToFile).get() else {
+                return ClientResponse(
+                  status: .notFound,
+                  headers: networkExchange.response.headers.removing(name: "Content-Type"),
+                  body: nil
+                )
+              }
+              
+              byteBuffer = content
+          }
           
           let clientResponse = ClientResponse(
             status: networkExchange.response.status,

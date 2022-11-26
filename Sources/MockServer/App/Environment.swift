@@ -3,10 +3,9 @@ import Vapor
 
 extension MockServer {
   /// The environment the application is running in, i.e., production, development.
-  public enum Environment {
+  public enum Environment: Equatable {
     case custom(name: String)
     case development
-    case production
     case testing
     
     /// The `Vapor` environment in which to run the server.
@@ -14,9 +13,6 @@ extension MockServer {
       switch self {
         case .development:
           return .development
-          
-        case .production:
-          return .production
           
         case .testing:
           return .testing

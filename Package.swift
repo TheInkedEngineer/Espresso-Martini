@@ -23,7 +23,11 @@ let package = Package(
                 .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release))
             ]
         ),
-        .executableTarget(name: "Run", dependencies: [.target(name: "MockServer")]),
+        .executableTarget(
+          name: "Run",
+          dependencies: [.target(name: "MockServer")],
+          resources: [.copy("file.json")]
+        ),
         .testTarget(name: "MockServerTests", dependencies: [
             .target(name: "MockServer"),
             .product(name: "XCTVapor", package: "vapor"),

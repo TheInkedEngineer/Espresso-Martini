@@ -14,3 +14,17 @@ public protocol ServerConfigurationProvider {
   /// The port listening to incoming requests.
   var port: Int { get }
 }
+
+extension ServerConfigurationProvider {
+  var environment: MockServer.Environment {
+    .development
+  }
+  
+  var hostname: String {
+    "127.0.0.1"
+  }
+  
+  var port: Int {
+    8080
+  }
+}
