@@ -2,17 +2,24 @@
 import PackageDescription
 
 let package = Package(
-    name: "MockServer",
+    name: "EspressoMartini",
     platforms: [
-       .macOS(.v12)
+      .macOS(.v12),
+      .iOS(.v13)
+    ],
+    products: [
+      .library(
+        name: "EspressoMartini",
+        targets: ["EMMockServer"]
+      )
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
+        .package(url: "https://github.com/vapor/vapor.git", exact: "4.68.0"),
     ],
     targets: [
         .target(
-            name: "App",
+            name: "EMMockServer",
             dependencies: [
                 .product(name: "Vapor", package: "vapor")
             ],
@@ -23,10 +30,18 @@ let package = Package(
                 .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release))
             ]
         ),
-        .executableTarget(name: "Run", dependencies: [.target(name: "App")]),
-        .testTarget(name: "AppTests", dependencies: [
-            .target(name: "App"),
+        .executableTarget(
+          name: "Run",
+          dependencies: [.target(name: "EMMockServer")],
+          resources: [.copy("Resources/")]
+        ),
+        .testTarget(
+          name: "EMMockServerTests",
+          dependencies: [
+            .target(name: "EMMockServer"),
             .product(name: "XCTVapor", package: "vapor"),
-        ])
+          ],
+          resources: [.copy("Resources/")]
+        )
     ]
 )
