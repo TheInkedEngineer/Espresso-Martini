@@ -10,7 +10,7 @@ public class MockServer {
   // MARK: Properties
   
   /// The `Vapor` `Application` instance.
-  private var vaporApplication: Application!
+  private var vaporApplication: Application?
   
   /// The host associated with the running instance's configuration.
   internal var host: String? {
@@ -38,10 +38,10 @@ public class MockServer {
     }
    
     vaporApplication = Application(configuration.environment.vaporEnvironment)
-    vaporApplication.http.server.configuration.port = configuration.port
-    vaporApplication.http.server.configuration.hostname = configuration.hostname
+    vaporApplication?.http.server.configuration.port = configuration.port
+    vaporApplication?.http.server.configuration.hostname = configuration.hostname
     
-    registerRoutes(configuration.networkExchanges, to: vaporApplication)
+    registerRoutes(configuration.networkExchanges, to: vaporApplication!)
   }
   
   /// Starts the underlying `Vapor` instance of the `MockServer`.
