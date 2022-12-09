@@ -26,11 +26,15 @@ let package = Package(
         .executableTarget(
           name: "Run",
           dependencies: [.target(name: "MockServer")],
-          resources: [.copy("file.json")]
+          resources: [.copy("Resources/")]
         ),
-        .testTarget(name: "MockServerTests", dependencies: [
+        .testTarget(
+          name: "MockServerTests",
+          dependencies: [
             .target(name: "MockServer"),
             .product(name: "XCTVapor", package: "vapor"),
-        ])
+          ],
+          resources: [.copy("Resources/")]
+        )
     ]
 )

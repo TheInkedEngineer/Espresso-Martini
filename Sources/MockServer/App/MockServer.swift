@@ -2,12 +2,15 @@ import Foundation
 import Vapor
 
 /// An object that can mock the behavior of a network exchange.
+/// It consists of 2 main methods:
+///  - `configure(configuration:)` which instantiates the `Vapor` application and register the routes.
+///  - `start()` which runs the `Vapor` instance.
 public class MockServer {
   
   // MARK: Properties
   
   /// The `Vapor` `Application` instance.
-  private var vaporApplication: Application?
+  private var vaporApplication: Application!
   
   /// The host associated with the running instance's configuration.
   internal var host: String? {
@@ -25,18 +28,30 @@ public class MockServer {
   
   // MARK: Methods
   
-  public func start(using configuration: ServerConfigurationProvider) throws {
+  /// Configures the `MockServer` instance.
+  ///
+  /// This needs to be called before the `start()` method is called.
+  /// - Parameter configuration: An object conforming to `ServerConfigurationProvider`, providing the necessary information.
+  public func configure(using configuration: any ServerConfigurationProvider) throws {
     guard vaporApplication == nil else {
       throw Error.instanceAlreadyRunning
     }
    
     vaporApplication = Application(configuration.environment.vaporEnvironment)
-    vaporApplication?.http.server.configuration.port = configuration.port
-    vaporApplication?.http.server.configuration.hostname = configuration.hostname
+    vaporApplication.http.server.configuration.port = configuration.port
+    vaporApplication.http.server.configuration.hostname = configuration.hostname
+    
+    registerRoutes(configuration.networkExchanges, to: vaporApplication)
+  }
   
+  /// Starts the underlying `Vapor` instance of the `MockServer`.
+  public func start() throws {
+    guard let vaporApplication else {
+      throw Error.serverNotConfigured
+    }
+    
     do {
-      registerRoutes(for: configuration.networkExchanges)
-      try vaporApplication?.run()
+      try vaporApplication.run()
     } catch {
       // The most common error would be when we try to run the server on a PORT that is already used.
       throw Error.vapor(error: error)
@@ -56,13 +71,17 @@ public class MockServer {
   /// - Throws: `ServerError.instanceAlreadyRunning` or a wrapped `Vapor` error.
   public func restart(with configuration: ServerConfigurationProvider) async throws {
     try await stop()
-    try start(using: configuration)
+    try configure(using: configuration)
+    try start()
   }
   
   /// Registers the routes that the Mock server should be able to intercept and respond to.
-  private func registerRoutes(for networkExchanges: [NetworkExchange]) {
+  /// - Parameters:
+  ///   - networkExchanges: An array of ``NetworkExchange`` to build the routes to intercept.
+  ///   - application: The `Vapor` application instance to which we attach the routes.
+  internal func registerRoutes(_ networkExchanges: [NetworkExchange], to application: Application) {
     networkExchanges.forEach { networkExchange in
-      vaporApplication?
+      application
         .on(networkExchange.request.method, networkExchange.request.pathComponents) { [networkExchange] request async throws in
           // The bytes to return with the response.
           let byteBuffer: ByteBuffer?

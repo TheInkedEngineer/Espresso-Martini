@@ -2,7 +2,8 @@ import MockServer
 import Vapor
 
 let server = MockServer()
-try? server.start(using: ServerConfiguration())
+try? server.configure(using: ServerConfiguration())
+try? server.start()
 
 defer {
   Task {
@@ -38,7 +39,13 @@ struct ServerConfiguration: ServerConfigurationProvider {
     MockServer.NetworkExchange(
       request: MockServer.Request(method: .GET, path: ["file"]),
       response: MockServer.Response(
-        kind: .fileContent(pathToFile: Bundle.module.path(forResource: "file", ofType: "json")!)
+        kind: .fileContent(pathToFile: Bundle.module.path(forResource: "Resources/file", ofType: "json")!)
+      )
+    ),
+    MockServer.NetworkExchange(
+      request: MockServer.Request(method: .GET, path: ["image"]),
+      response: MockServer.Response(
+        kind: .fileContent(pathToFile: Bundle.module.path(forResource: "Resources/vapor", ofType: "jpg")!)
       )
     )
   ]
