@@ -14,8 +14,8 @@ The library is fully tested and documented.
 
 # 1. Requirements and Compatibility
 
-- Xcode 13+
-- Swift 5.5+
+- Xcode 13.2+
+- Swift 5.6+
 
 # 2. Installation
 
@@ -27,7 +27,7 @@ Open your `Package.swift` file and add the following as your dependency.
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/TheInkedEngineer/Espresso-Martini", from: "0.1.0")
+  .package(url: "https://github.com/TheInkedEngineer/Espresso-Martini", from: "1.0.0")
 ]
 ```
 
