@@ -3,21 +3,34 @@
 </p>
 
 [![Twitter](https://img.shields.io/twitter/url/https/theinkedgineer.svg?label=TheInkedgineer&style=social)](https://twitter.com/inkedengineer)
-![SwiftLang badge](https://img.shields.io/badge/language-Swift%205.7-orange.svg)
+![SwiftLang badge](https://img.shields.io/badge/language-Swift%205.6-orange.svg)
 
 # Espresso Martini
 
 `Espresso Martini` is a vapor-powered mock server. It allows you you to mock HTTP requests easily, so you worry about the things that matter, and not have to wait on APIs to be live.
 
-The library is fully tested and documented.
+Just configure your request/response pairs, known as `NetworkExchange`, run the server, and you are good to go. Requests made to the configured hostname and port will be intercepted and the server will return any desired response.
 
+It supports different types of data, response headers and all HTTP response codes. 
+
+The library is fully tested and documented.
 
 # 1. Requirements and Compatibility
 
 - Xcode 13.2+
 - Swift 5.6+
+- iOS 13+
+- macOS 12+
 
-# 2. Installation
+> When running on iOS you will get a threading warning, which is a [known issue](https://github.com/apple/swift-nio/issues/2223) with NIO and can be safely ignored.
+
+# 2. Roadmap
+
+[] Add support for folder based request/response pairs
+[] Add support for customised response based on query parameters
+[] App support for retry-able request
+
+# 3. Installation
 
 ## Swift Package Manager
 
@@ -61,11 +74,18 @@ The code for `Espresso-Martini` is fully documented. An DocC documentation will 
 
 # 4. How to use
 
+## As in-app package
+
+- Start by importing the mock server using `import EMMockServer`
+- Configure the mock server, either by using `SimpleConfigurationProvider` or creating your custom implementation of `ServerConfigurationProvider`
+- call `run()`
+
+## Server running on the mac
+
 - Download the project
-- Open Package.swift
+- Open Package.swift with Xcode
 - Add your requests to `try? server.configure(using: ServerConfiguration(networkExchanges: Demo.networkExchanges))` inside of `main.swift`.
 - Hit run
-
 
 # 5. Contribution
 
