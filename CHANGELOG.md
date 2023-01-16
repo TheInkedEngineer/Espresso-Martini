@@ -6,6 +6,7 @@ Releases will be named after famous illusionists.
 
 ### Added
 - Possibility to add a global delay to all requests
+- Possibility to add a delay on a per-networkExchange basis (will override global delay)
 
 ## [1.0.0] - David Copperfield
 
