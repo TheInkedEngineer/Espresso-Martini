@@ -10,7 +10,7 @@ Releases will be named after famous illusionists.
 ## [1.0.0] - David Copperfield
 
 ### Added
-- Match requests based on method v path components
+- Match requests based on method + path components
 - Possibility to run a mock server for the following response types:
   - empty
   - string

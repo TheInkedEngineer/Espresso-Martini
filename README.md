@@ -26,10 +26,14 @@ The library is fully tested and documented.
 
 # 2. Roadmap
 
-- [] Add support for folder based request/response pairs
-- [] Add support for customised response based on query parameters
-- [] Add support for retry-able request
-- [x] Add support for a global delay
+[] Add support for folder based request/response pairs
+
+[] Add support for customised response based on query parameters
+
+[] Add support for retry-able request
+
+[x] Add support for a global delay
+
 
 # 3. Installation
 
