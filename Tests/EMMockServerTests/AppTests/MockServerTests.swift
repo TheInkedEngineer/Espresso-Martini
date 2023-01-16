@@ -31,7 +31,7 @@ final class MockServerTests: XCTestCase {
     XCTAssertTrue(castedErrorCorrectly)
   }
   
-  func test_delay_properly_executes() throws {
+  func test_globalDelay_properly_executes() throws {
     // Given
     let app = Application(.testing)
     defer { app.shutdown() }
@@ -53,5 +53,30 @@ final class MockServerTests: XCTestCase {
     
     // Then
     XCTAssertTrue((1.5...2.5) ~= timeElapsed) // We give it a 0.5s tolerance
+  }
+  
+  func test_globalDelay_overriden() throws {
+    // Given
+    let app = Application(.testing)
+    defer { app.shutdown() }
+    let mockServer = MockServer()
+    let exchange = MockServer.NetworkExchange(
+      request: MockServer.Request(method: .GET, path: ["string"]),
+      response: MockServer.Response(status: .created),
+      delay: 1
+    )
+    try mockServer.configure(using: TestsHelpers.Configuration(networkExchanges: [exchange], delay: 2))
+    mockServer.registerRoutes([exchange], to: app)
+    
+    // When
+    let startTime = CFAbsoluteTimeGetCurrent()
+    var timeElapsed: CFAbsoluteTime!
+    
+    try app.test(.GET, "string") { response in
+      timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+    }
+    
+    // Then
+    XCTAssertTrue((0.5...1.5) ~= timeElapsed) // We give it a 0.5s tolerance
   }
 }

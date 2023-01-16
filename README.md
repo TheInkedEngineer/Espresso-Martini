@@ -30,6 +30,7 @@ The library is fully tested and documented.
 - [ ] Add support for customised response based on query parameters
 - [ ] Add support for retry-able request
 - [x] Add support for a global delay
+- [x] Add support for a delay on a per `networkExchange` basis
 
 # 3. Installation
 
