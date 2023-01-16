@@ -12,6 +12,9 @@ public class MockServer {
   /// The `Vapor` `Application` instance.
   private var vaporApplication: Application?
   
+  /// The amount of time (in seconds) the server has to wait before returning a response.
+  internal private(set) var delay: Double = 0
+  
   /// The host associated with the running instance's configuration.
   internal var host: String? {
     vaporApplication?.http.server.configuration.hostname
@@ -36,11 +39,13 @@ public class MockServer {
     guard vaporApplication == nil else {
       throw Error.instanceAlreadyRunning
     }
-   
+
     vaporApplication = Application(configuration.environment.vaporEnvironment)
     vaporApplication?.http.server.configuration.port = configuration.port
     vaporApplication?.http.server.configuration.hostname = configuration.hostname
     
+    delay = configuration.delay
+
     registerRoutes(configuration.networkExchanges, to: vaporApplication!)
   }
   
@@ -87,53 +92,68 @@ public class MockServer {
   internal func registerRoutes(_ networkExchanges: [NetworkExchange], to application: Application) {
     networkExchanges.forEach { networkExchange in
       application
-        .on(networkExchange.request.method, networkExchange.request.pathComponents) { [networkExchange] request async throws in
-          // The bytes to return with the response.
-          let byteBuffer: ByteBuffer?
-          
-          switch networkExchange.response.kind {
-            case .empty:
-              byteBuffer = nil
-              
-            case let .string(value):
-              byteBuffer = ByteBuffer(string: value)
-              
-            case let .data(value):
-              byteBuffer = ByteBuffer(data: value)
-              
-            case let .json(value, encoder):
-              guard let data = try? encoder.encode(value) else {
-                // If we fail to encode the data, we just throw a server error.
-                return ClientResponse(
-                  status: .internalServerError,
-                  headers: networkExchange.response.headers.removing(name: "Content-Type"),
-                  body: nil
-                )
-              }
-              
-              byteBuffer = ByteBuffer(data: data)
-              
-            case let .fileContent(pathToFile):
-              // If we fail to find the file (most likely only reason for failure), we just throw a 404 error.
-              guard let content = try? await request.fileio.collectFile(at: pathToFile).get() else {
-                return ClientResponse(
-                  status: .notFound,
-                  headers: networkExchange.response.headers.removing(name: "Content-Type"),
-                  body: nil
-                )
-              }
-              
-              byteBuffer = content
-          }
-          
-          let clientResponse = ClientResponse(
-            status: networkExchange.response.status,
-            headers: networkExchange.response.headers,
-            body: byteBuffer
-          )
-          
-          return clientResponse
+        .on(networkExchange.request.method, networkExchange.request.pathComponents) { [self, networkExchange] request async throws in
+          await generateClientResponse(using: networkExchange, for: request)
       }
     }
+  }
+  
+  /// Generates the `ClientResponse` given a `NetworkExchange` and `Vapor.Request`
+  /// - Parameters:
+  ///   - networkExchange: A `NetworkExchange` object used to fetched the information of the desired response.
+  ///   - request: A `Vapor.Request` object used to collect data from a file.
+  /// - Returns: A `ClientResponse` object.
+  private func generateClientResponse(using networkExchange: NetworkExchange, for request: Vapor.Request) async -> ClientResponse {
+    // The bytes to return with the response.
+    let byteBuffer: ByteBuffer?
+    
+    if #unavailable(macOS 13) {
+      try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+    } else {
+      try? await Task.sleep(for: .seconds(delay))
+    }
+    
+    switch networkExchange.response.kind {
+      case .empty:
+        byteBuffer = nil
+        
+      case let .string(value):
+        byteBuffer = ByteBuffer(string: value)
+        
+      case let .data(value):
+        byteBuffer = ByteBuffer(data: value)
+        
+      case let .json(value, encoder):
+        guard let data = try? encoder.encode(value) else {
+          // If we fail to encode the data, we just throw a server error.
+          return ClientResponse(
+            status: .internalServerError,
+            headers: networkExchange.response.headers.removing(name: "Content-Type"),
+            body: nil
+          )
+        }
+        
+        byteBuffer = ByteBuffer(data: data)
+        
+      case let .fileContent(pathToFile):
+        // If we fail to find the file (most likely only reason for failure), we just throw a 404 error.
+        guard let content = try? await request.fileio.collectFile(at: pathToFile).get() else {
+          return ClientResponse(
+            status: .notFound,
+            headers: networkExchange.response.headers.removing(name: "Content-Type"),
+            body: nil
+          )
+        }
+        
+        byteBuffer = content
+    }
+    
+    let clientResponse = ClientResponse(
+      status: networkExchange.response.status,
+      headers: networkExchange.response.headers,
+      body: byteBuffer
+    )
+    
+    return clientResponse
   }
 }
