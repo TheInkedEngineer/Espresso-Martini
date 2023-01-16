@@ -56,7 +56,7 @@ enum TestsHelpers {
     let environment: MockServer.Environment = .testing
     var hostname: String = "localhost"
     var port: Int = 8081
-    var delay: Double = 0.1
+    var delay: TimeInterval = 0.1
   }
   
   // MARK: Objects

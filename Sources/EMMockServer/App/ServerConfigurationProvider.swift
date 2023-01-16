@@ -32,7 +32,7 @@ public protocol ServerConfigurationProvider {
   /// The amount of time (in seconds) the server has to wait before before returning the response.
   ///
   /// Defaults to `0`.
-  var delay: Double { get }
+  var delay: TimeInterval { get }
 }
 
 extension ServerConfigurationProvider {
@@ -48,7 +48,7 @@ extension ServerConfigurationProvider {
     8080
   }
   
-  public var delay: Double {
+  public var delay: TimeInterval {
     0
   }
 }

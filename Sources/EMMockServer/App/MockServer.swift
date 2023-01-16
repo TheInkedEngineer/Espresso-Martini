@@ -13,7 +13,7 @@ public class MockServer {
   private var vaporApplication: Application?
   
   /// The amount of time (in seconds) the server has to wait before returning a response.
-  internal private(set) var delay: Double = 0
+  internal private(set) var delay: TimeInterval = 0
   
   /// The host associated with the running instance's configuration.
   internal var host: String? {
@@ -108,9 +108,9 @@ public class MockServer {
     let byteBuffer: ByteBuffer?
     
     if #unavailable(macOS 13) {
-      try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+      try? await Task.sleep(nanoseconds: UInt64((networkExchange.delay ?? delay) * 1_000_000_000))
     } else {
-      try? await Task.sleep(for: .seconds(delay))
+      try? await Task.sleep(for: .seconds(networkExchange.delay ?? delay))
     }
     
     switch networkExchange.response.kind {
