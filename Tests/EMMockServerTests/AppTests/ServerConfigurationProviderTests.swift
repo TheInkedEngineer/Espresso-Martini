@@ -12,6 +12,7 @@ final class ServerConfigurationProviderTests: XCTestCase {
     XCTAssertEqual(configuration.environment, .development)
     XCTAssertEqual(configuration.hostname, "127.0.0.1")
     XCTAssertEqual(configuration.port, 8080)
+    XCTAssertEqual(configuration.delay, 0)
   }
   
   func testCustomValuesProperlySet() {
@@ -22,5 +23,6 @@ final class ServerConfigurationProviderTests: XCTestCase {
     XCTAssertEqual(configuration.environment, .testing)
     XCTAssertEqual(configuration.hostname, "localhost")
     XCTAssertEqual(configuration.port, 8081)
+    XCTAssertEqual(configuration.delay, 0.1)
   }
 }

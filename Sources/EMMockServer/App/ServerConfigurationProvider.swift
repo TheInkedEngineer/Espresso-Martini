@@ -15,13 +15,24 @@ public protocol ServerConfigurationProvider {
   var networkExchanges: [MockServer.NetworkExchange] { get }
   
   /// The environment in which to run the application.
+  ///
+  /// Defaults to `.development`.
   var environment: MockServer.Environment { get }
   
   /// The host part of the `URL`.
+  ///
+  /// Defaults to `127.0.0.1`.
   var hostname: String { get }
 
   /// The port listening to incoming requests.
+  ///
+  /// Defaults to `8080`.
   var port: Int { get }
+  
+  /// The amount of time (in seconds) the server has to wait before before returning the response.
+  ///
+  /// Defaults to `0`.
+  var delay: Double { get }
 }
 
 extension ServerConfigurationProvider {
@@ -35,5 +46,9 @@ extension ServerConfigurationProvider {
   
   public var port: Int {
     8080
+  }
+  
+  public var delay: Double {
+    0
   }
 }
