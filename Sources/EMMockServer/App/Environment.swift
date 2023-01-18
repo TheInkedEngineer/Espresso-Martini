@@ -3,7 +3,7 @@ import Vapor
 
 extension MockServer {
   /// The environment the application is running in, i.e., production, development.
-  public enum Environment: Equatable {
+  public enum Environment: Decodable, Equatable {
     case custom(name: String)
     case development
     case testing
