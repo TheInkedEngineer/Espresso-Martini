@@ -5,8 +5,12 @@ Releases will be named after famous illusionists.
 ## [1.1.0] - Harry Houdini
 
 ### Added
-- Possibility to add a global delay to all requests
-- Possibility to add a delay on a per-networkExchange basis (will override global delay)
+- Possibility to add a global delay to all requests [#3](https://github.com/TheInkedEngineer/Espresso-Martini/pull/3)
+- Possibility to add a delay on a per-networkExchange basis (will override global delay) [#5](https://github.com/TheInkedEngineer/Espresso-Martini/pull/5)
+- `MockServer.Configuration`; a concrete implementation of `ServerConfigurationProvider`.
+
+### Deprecated
+- `SimpleConfigurationProvider` has been renamed `MockServer.SimpleConfiguration`
 
 ## [1.0.0] - David Copperfield
 

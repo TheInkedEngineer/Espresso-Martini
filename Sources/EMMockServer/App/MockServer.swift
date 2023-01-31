@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 import Vapor
 
 /// An object that can mock the behavior of a network exchange.
@@ -9,8 +10,11 @@ public class MockServer {
   
   // MARK: Properties
   
+  /// The global logger used inside of the mock server.
+  public static let logger = Logger(label: "com.theinkedengineer.espresso-martini")
+  
   /// The `Vapor` `Application` instance.
-  private var vaporApplication: Application?
+  public private(set) var vaporApplication: Application?
   
   /// The amount of time (in seconds) the server has to wait before returning a response.
   internal private(set) var delay: TimeInterval = 0
@@ -23,6 +27,17 @@ public class MockServer {
   /// The port associated with the running instance's configuration.
   internal var port: Int? {
     vaporApplication?.http.server.configuration.port
+  }
+  
+  /// The description of the address where the server will be running.
+  ///
+  /// If called before the server is configured, it will return nil.
+  public var addressDescription: String? {
+    guard let host = host, let port = port else {
+      return nil
+    }
+    
+    return "http://\(host):\(port)"
   }
   
   // MARK: Init
@@ -43,6 +58,8 @@ public class MockServer {
     vaporApplication = Application(configuration.environment.vaporEnvironment)
     vaporApplication?.http.server.configuration.port = configuration.port
     vaporApplication?.http.server.configuration.hostname = configuration.hostname
+    vaporApplication?.logger.logLevel = .error
+    vaporApplication?.http.server.configuration.logger.logLevel = .error
     
     delay = configuration.delay
 
@@ -56,12 +73,9 @@ public class MockServer {
     }
     
     do {
-      #if os(iOS)
-        // https://www.kodeco.com/31498014-running-a-web-server-on-ios-with-vapor#toc-anchor-005
-        try vaporApplication.start()
-      #elseif os(macOS)
-        try vaporApplication.run()
-      #endif
+      // https://www.kodeco.com/31498014-running-a-web-server-on-ios-with-vapor#toc-anchor-005
+      try vaporApplication.server.start()
+      MockServer.logger.notice("Server starting on \(addressDescription!)")
     } catch {
       // The most common error would be when we try to run the server on a PORT that is already used.
       throw Error.vapor(error: error)
@@ -107,7 +121,7 @@ public class MockServer {
     // The bytes to return with the response.
     let byteBuffer: ByteBuffer?
     
-    if #unavailable(macOS 13) {
+    if #unavailable(macOS 13), #unavailable(iOS 16.0) {
       try? await Task.sleep(nanoseconds: UInt64((networkExchange.delay ?? delay) * 1_000_000_000))
     } else {
       try? await Task.sleep(for: .seconds(networkExchange.delay ?? delay))

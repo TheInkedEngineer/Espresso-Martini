@@ -11,11 +11,18 @@ let package = Package(
       .library(
         name: "EspressoMartini",
         targets: ["EMMockServer"]
+      ),
+      .executable(
+        name: "EMLocalServer",
+        targets: [
+          "EMLocalServer"
+        ]
       )
     ],
     dependencies: [
         // 💧 A server-side Swift web framework.
         .package(url: "https://github.com/vapor/vapor.git", exact: "4.68.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.0.0"),
     ],
     targets: [
         .target(
@@ -25,9 +32,11 @@ let package = Package(
             ]
         ),
         .executableTarget(
-          name: "Run",
-          dependencies: [.target(name: "EMMockServer")],
-          resources: [.copy("Resources/")]
+          name: "EMLocalServer",
+          dependencies: [
+            .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            .target(name: "EMMockServer")
+          ]
         ),
         .testTarget(
           name: "EMMockServerTests",

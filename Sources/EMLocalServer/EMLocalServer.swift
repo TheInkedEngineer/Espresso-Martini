@@ -23,11 +23,11 @@ extension EMLocalServer {
     var configurationFile: String
     
     func run() throws {
-      let mockServerConfiguration: MockServerConfiguration
+      let mockServerConfiguration: MockServer.Configuration
       
       if !configurationFile.isEmpty {
         let configurationURL: URL = {
-          if #available(macOS 13.0, *) {
+          if #available(macOS 13.0, *), #available(iOS 16.0, *) {
             return URL(string: FileManager.default.currentDirectoryPath)!
               .appending(path: configurationFile)
           } else {
@@ -44,7 +44,7 @@ extension EMLocalServer {
           throw ValidationError("Configuration file at: \(configurationURL.absoluteString) is invalid.")
         }
         
-        mockServerConfiguration = MockServerConfiguration(
+        mockServerConfiguration = MockServer.Configuration(
           networkExchanges: [],
           environment: configuration.environment,
           hostname: configuration.hostname,
@@ -52,7 +52,7 @@ extension EMLocalServer {
           delay: configuration.delay
         )
       } else {
-        mockServerConfiguration = MockServerConfiguration(
+        mockServerConfiguration = MockServer.Configuration(
           networkExchanges: [],
           environment: .development,
           hostname: "127.0.0.1",
@@ -64,6 +64,24 @@ extension EMLocalServer {
       let mockServer = MockServer()
       try mockServer.configure(using: mockServerConfiguration)
       try mockServer.run()
+      
+      let promise = mockServer.vaporApplication!.eventLoopGroup.next().makePromise(of: Void.self)
+      mockServer.vaporApplication!.running = .start(using: promise)
+      try mockServer.vaporApplication?.running?.onStop.wait()
+      
+      // setup signal sources for shutdown
+      let signalQueue = DispatchQueue(label: "com.theinkedengineer.espressoMartini.shutdown")
+      func makeSignalSource(_ code: Int32) {
+          let source = DispatchSource.makeSignalSource(signal: code, queue: signalQueue)
+          source.setEventHandler {
+              print() // clear ^C
+              promise.succeed(())
+          }
+          source.resume()
+          signal(code, SIG_IGN)
+      }
+      makeSignalSource(SIGTERM)
+      makeSignalSource(SIGINT)
     }
   }
 }
