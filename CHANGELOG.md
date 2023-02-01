@@ -7,7 +7,10 @@ Releases will be named after famous illusionists.
 ### Added
 - Possibility to add a global delay to all requests [#3](https://github.com/TheInkedEngineer/Espresso-Martini/pull/3)
 - Possibility to add a delay on a per-networkExchange basis (will override global delay) [#5](https://github.com/TheInkedEngineer/Espresso-Martini/pull/5)
-- `MockServer.Configuration`; a concrete implementation of `ServerConfigurationProvider`.
+- `MockServer.Configuration` -- a concrete implementation of `ServerConfigurationProvider`.
+- Support to run the server from the command line using `espressomartini run`
+- Support to configure the server parameters from the CLI using `--configuration` flag
+- Support for installing CLI via [Make](https://www.gnu.org/software/make/)
 
 ### Deprecated
 - `SimpleConfigurationProvider` has been renamed `MockServer.SimpleConfiguration`

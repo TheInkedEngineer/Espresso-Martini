@@ -13,9 +13,9 @@ let package = Package(
         targets: ["EMMockServer"]
       ),
       .executable(
-        name: "EMLocalServer",
+        name: "espressomartini-cli",
         targets: [
-          "EMLocalServer"
+          "EspressoMartiniCLI"
         ]
       )
     ],
@@ -32,7 +32,7 @@ let package = Package(
             ]
         ),
         .executableTarget(
-          name: "EMLocalServer",
+          name: "EspressoMartiniCLI",
           dependencies: [
             .product(name: "ArgumentParser", package: "swift-argument-parser"),
             .target(name: "EMMockServer")

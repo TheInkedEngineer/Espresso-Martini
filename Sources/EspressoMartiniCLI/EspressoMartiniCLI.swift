@@ -2,7 +2,7 @@ import ArgumentParser
 import Foundation
 import EMMockServer
 
-struct EMLocalServer: ParsableCommand {
+struct EspressoMartiniCLI: ParsableCommand {
   static let configuration = CommandConfiguration(
     commandName: "espressomartini",
     abstract: "Manage your Espresso Martini server from the command line.",
@@ -11,7 +11,7 @@ struct EMLocalServer: ParsableCommand {
   )
 }
 
-extension EMLocalServer {
+extension EspressoMartiniCLI {
   struct Run: ParsableCommand {
     static let configuration = CommandConfiguration(
       commandName: "run",
@@ -23,7 +23,7 @@ extension EMLocalServer {
     var configurationFile: String
     
     func run() throws {
-      let mockServerConfiguration: MockServer.Configuration
+      let mockServerConfiguration: ServerConfigurationProvider
       
       if !configurationFile.isEmpty {
         let configurationURL: URL = {
@@ -52,13 +52,7 @@ extension EMLocalServer {
           delay: configuration.delay
         )
       } else {
-        mockServerConfiguration = MockServer.Configuration(
-          networkExchanges: [],
-          environment: .development,
-          hostname: "127.0.0.1",
-          port: 8080,
-          delay: 0
-        )
+        mockServerConfiguration = MockServer.SimpleConfiguration(networkExchanges: [])
       }
       
       let mockServer = MockServer()
