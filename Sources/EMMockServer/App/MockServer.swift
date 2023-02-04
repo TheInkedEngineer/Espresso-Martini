@@ -1,5 +1,4 @@
 import Foundation
-import Logging
 import Vapor
 
 /// An object that can mock the behavior of a network exchange.
@@ -9,9 +8,6 @@ import Vapor
 public class MockServer {
   
   // MARK: Properties
-  
-  /// The global logger used inside of the mock server.
-  public static let logger = Logger(label: "com.theinkedengineer.espresso-martini")
   
   /// The `Vapor` `Application` instance.
   public private(set) var vaporApplication: Application?
@@ -58,8 +54,6 @@ public class MockServer {
     vaporApplication = Application(configuration.environment.vaporEnvironment)
     vaporApplication?.http.server.configuration.port = configuration.port
     vaporApplication?.http.server.configuration.hostname = configuration.hostname
-    vaporApplication?.logger.logLevel = .error
-    vaporApplication?.http.server.configuration.logger.logLevel = .error
     
     delay = configuration.delay
 
