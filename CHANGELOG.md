@@ -7,12 +7,12 @@ Releases will be named after famous illusionists.
 ### Added
 - Possibility to add a global delay to all requests [#3](https://github.com/TheInkedEngineer/Espresso-Martini/pull/3)
 - Possibility to add a delay on a per-networkExchange basis (will override global delay) [#5](https://github.com/TheInkedEngineer/Espresso-Martini/pull/5)
-- `MockServer.Configuration` -- a concrete implementation of `ServerConfigurationProvider`.
-- Support to run the server from the command line using `espressomartini run`
-- Support to configure the server parameters from the CLI using `--configuration` argument
-- Support for installing CLI via [Make](https://www.gnu.org/software/make/)
-- Support to list all valid endpoints from the command line using `espressomartini endpoints`
-- Support to get detailed information of the endpoints using the `--verbose` flag.
+- `MockServer.Configuration` -- a concrete implementation of `ServerConfigurationProvider`.[#7](https://github.com/TheInkedEngineer/Espresso-Martini/pull/7)
+- Support to run the server from the command line using `espressomartini run`[#7](https://github.com/TheInkedEngineer/Espresso-Martini/pull/7)
+- Support to configure the server parameters from the CLI using `--configuration` argument[#7](https://github.com/TheInkedEngineer/Espresso-Martini/pull/7)
+- Support for installing CLI via [Make](https://www.gnu.org/software/make/)[#7](https://github.com/TheInkedEngineer/Espresso-Martini/pull/7)
+- Support to list all valid endpoints from the command line using `espressomartini endpoints`[#8](https://github.com/TheInkedEngineer/Espresso-Martini/pull/8)
+- Support to get detailed information of the endpoints using the `--verbose` flag.[#8](https://github.com/TheInkedEngineer/Espresso-Martini/pull/8)
 
 ### Deprecated
 - `SimpleConfigurationProvider` has been renamed `MockServer.SimpleConfiguration`
