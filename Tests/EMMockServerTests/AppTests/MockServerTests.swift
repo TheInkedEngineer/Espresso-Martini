@@ -79,4 +79,16 @@ final class MockServerTests: XCTestCase {
     // Then
     XCTAssertTrue((0.5...1.5) ~= timeElapsed) // We give it a 0.5s tolerance
   }
+
+  func test_addressDescription_returns_nil_if_notConfigured() throws {
+    let server = MockServer()
+    XCTAssertNil(server.addressDescription)
+  }
+  
+  func test_addressDescription_correctlyFormed() throws {
+    let server = MockServer()
+    try server.configure(using: MockServer.SimpleConfiguration(networkExchanges: []))
+    
+    XCTAssertEqual(server.addressDescription, "http://127.0.0.1:8080")
+  }
 }

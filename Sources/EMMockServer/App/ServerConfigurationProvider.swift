@@ -1,14 +1,5 @@
 import Foundation
 
-/// A simple implementation of `ServerConfigurationProvider` that uses all the default values.
-public struct SimpleConfigurationProvider: ServerConfigurationProvider {
-  public var networkExchanges: [EMMockServer.MockServer.NetworkExchange]
-  
-  public init(networkExchanges: [EMMockServer.MockServer.NetworkExchange]) {
-    self.networkExchanges = networkExchanges
-  }
-}
-
 /// The required configuration for the server to properly run.
 public protocol ServerConfigurationProvider {
   /// The list of all network exchanges the server should be able to intercept and return.

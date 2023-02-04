@@ -26,11 +26,14 @@ The library is fully tested and documented.
 
 # 2. Roadmap
 
-- [ ] Add support for folder based request/response pairs
-- [ ] Add support for customised response based on query parameters
-- [ ] Add support for retry-able request
+- [x] Add support for folder based request/response pairs
 - [x] Add support for a global delay
 - [x] Add support for a delay on a per `networkExchange` basis
+- [x] Add a CLI
+- [ ] Add possibility to fetch the list of all corrupted endpoints
+- [ ] Add possibility to fetch why an endpoint is corrupted
+- [ ] Add support for customised response based on query parameters
+- [ ] Add support for retry-able request
 
 # 3. Installation
 
@@ -70,11 +73,17 @@ targets: [
 1. Click on the `Add Package` button
 1. Follow the Xcode's dialog to install the SDK
 
-# 3. Documentation
+## CLI
+
+1. Clone the repo `git clone git@github.com:TheInkedEngineer/Espresso-Martini.git`
+1. `cd Espresso-Martini`
+1. `make` -- you might need to run it with `sudo` privileges.
+
+# 4. Documentation
 
 The code for `Espresso-Martini` is fully documented. An DocC documentation will follow :).
 
-# 4. How to use
+# 5. How to use
 
 ## As in-app package
 
@@ -82,13 +91,17 @@ The code for `Espresso-Martini` is fully documented. An DocC documentation will 
 - Configure the mock server, either by using `SimpleConfigurationProvider` or creating your custom implementation of `ServerConfigurationProvider`
 - call `run()`
 
-## Server running on the mac
+> NOTE: When using with a sandboxed `macOS` application make sure the networking entitlements are turned on.
 
-- Download the project
-- Open Package.swift with Xcode
-- Add your requests to `try? server.configure(using: ServerConfiguration(networkExchanges: Demo.networkExchanges))` inside of `main.swift`.
-- Hit run
+## CLI
 
-# 5. Contribution
+- `espressomartini run` -- Runs the server with the list of all network exchanges.
+  - `--configuration <file>` argument points to the name of the configuration file.
+  - `--requests-folder <folder>` argument points to the name of the folder where the request reside. Defaults to `networkExchanges`.
+- `espressomartini endpoints` -- Fetches the list of all the endpoints
+  - `--requests-folder <folder>` argument points to the name of the folder where the request reside. Defaults to `networkExchanges`. 
+  - `--verbose` flag add details around the response to the list of endpoints
+
+# 6. Contribution
 
 **Working on your first Pull Request?** You can learn how from this *free* series [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
