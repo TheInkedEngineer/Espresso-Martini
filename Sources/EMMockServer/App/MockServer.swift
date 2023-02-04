@@ -10,9 +10,6 @@ public class MockServer {
   
   // MARK: Properties
   
-  /// The global logger used inside of the mock server.
-  public static let logger = Logger(label: "com.theinkedengineer.espresso-martini")
-  
   /// The `Vapor` `Application` instance.
   public private(set) var vaporApplication: Application?
   
@@ -58,8 +55,6 @@ public class MockServer {
     vaporApplication = Application(configuration.environment.vaporEnvironment)
     vaporApplication?.http.server.configuration.port = configuration.port
     vaporApplication?.http.server.configuration.hostname = configuration.hostname
-    vaporApplication?.logger.logLevel = .error
-    vaporApplication?.http.server.configuration.logger.logLevel = .error
     
     delay = configuration.delay
 
@@ -75,7 +70,6 @@ public class MockServer {
     do {
       // https://www.kodeco.com/31498014-running-a-web-server-on-ios-with-vapor#toc-anchor-005
       try vaporApplication.server.start()
-      MockServer.logger.notice("Server starting on \(addressDescription!)")
     } catch {
       // The most common error would be when we try to run the server on a PORT that is already used.
       throw Error.vapor(error: error)
