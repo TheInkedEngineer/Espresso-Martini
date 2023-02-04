@@ -84,7 +84,6 @@ final class MockServerTests: XCTestCase {
     let server = MockServer()
     XCTAssertNil(server.addressDescription)
   }
-
   
   func test_addressDescription_correctlyFormed() throws {
     let server = MockServer()
