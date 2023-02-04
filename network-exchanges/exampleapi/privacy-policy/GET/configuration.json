@@ -1,0 +1,7 @@
+{
+  "status_code": 200,
+  "headers": {
+    "key": "value"
+  },
+  "response_file": "response-eu.json"
+}

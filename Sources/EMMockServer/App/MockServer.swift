@@ -75,7 +75,6 @@ public class MockServer {
     do {
       // https://www.kodeco.com/31498014-running-a-web-server-on-ios-with-vapor#toc-anchor-005
       try vaporApplication.server.start()
-      MockServer.logger.notice("Server starting on \(addressDescription!)")
     } catch {
       // The most common error would be when we try to run the server on a PORT that is already used.
       throw Error.vapor(error: error)

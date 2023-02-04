@@ -21,5 +21,8 @@ public typealias HTTPHeaders = NIOHTTP1.HTTPHeaders
 /// A `HTTP` response status code.
 public typealias HTTPResponseStatus = NIOHTTP1.HTTPResponseStatus
 
+/// A `HTTP` method.
+public typealias HTTPMethod = NIOHTTP1.HTTPMethod
+
 /// The `HTTP` media type associated with the `Content-Type` value in the header.
 public typealias ContentType = HTTPMediaType

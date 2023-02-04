@@ -22,6 +22,13 @@ extension MockServer {
     /// - `/api/**` will be matched by `/api/v1/users`, `/api/users/notes` and anything that starts with `/api`.
     public let path: Path
     
+    /// Returns the path as a `String` where each component is separated by a slash.
+    public var pathAsString: String {
+      path.reduce(into: "") {
+        $0 += "/\($1)"
+      }
+    }
+    
     /// ``path`` transformed into Vapor's [PathComponent]
     internal var pathComponents: [PathComponent] {
       path.map {
