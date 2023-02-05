@@ -42,6 +42,7 @@ let package = Package(
       name: "EspressoMartiniCLI",
       dependencies: [
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
+        .target(name: "EMLogger"),
         .target(name: "EMMockServer")
       ]
     ),
@@ -49,7 +50,6 @@ let package = Package(
       name: "EMMockServerTests",
       dependencies: [
         .target(name: "EMMockServer"),
-        .target(name: "EMLogger"),
         .product(name: "XCTVapor", package: "vapor"),
       ],
       resources: [.copy("Resources/")]
