@@ -13,6 +13,7 @@ Releases will be named after famous illusionists.
 - Support for installing CLI via [Make](https://www.gnu.org/software/make/)[#7](https://github.com/TheInkedEngineer/Espresso-Martini/pull/7)
 - Support to list all valid endpoints from the command line using `espressomartini endpoints`[#8](https://github.com/TheInkedEngineer/Espresso-Martini/pull/8)
 - Support to get detailed information of the endpoints using the `--verbose` flag.[#8](https://github.com/TheInkedEngineer/Espresso-Martini/pull/8)
+- Possibility to choose the level of information to print in the console. [#11](https://github.com/TheInkedEngineer/Espresso-Martini/pull/11)
 
 ### Deprecated
 - `SimpleConfigurationProvider` has been renamed `MockServer.SimpleConfiguration`
