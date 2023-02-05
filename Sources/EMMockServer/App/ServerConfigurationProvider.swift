@@ -1,4 +1,5 @@
 import Foundation
+import EMLogger
 
 /// The required configuration for the server to properly run.
 public protocol ServerConfigurationProvider {
@@ -24,6 +25,9 @@ public protocol ServerConfigurationProvider {
   ///
   /// Defaults to `0`.
   var delay: TimeInterval { get }
+  
+  /// The desired level of logging.
+  var logLevel: EMLogger.Level { get }
 }
 
 extension ServerConfigurationProvider {
@@ -41,5 +45,9 @@ extension ServerConfigurationProvider {
   
   public var delay: TimeInterval {
     0
+  }
+  
+  public var logLevel: EMLogger.Level {
+    .info
   }
 }

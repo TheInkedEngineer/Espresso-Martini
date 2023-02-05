@@ -1,3 +1,4 @@
+import EMLogger
 import Foundation
 import Vapor
 
@@ -54,6 +55,14 @@ public class MockServer {
     vaporApplication = Application(configuration.environment.vaporEnvironment)
     vaporApplication?.http.server.configuration.port = configuration.port
     vaporApplication?.http.server.configuration.hostname = configuration.hostname
+    vaporApplication?.logger = Logger(
+      label: "com.theinkedengineer.com",
+      factory: { _ in EMLogger(logLevel: configuration.logLevel) }
+    )
+    vaporApplication?.http.server.configuration.logger = Logger(
+      label: "com.theinkedengineer.com",
+      factory: { _ in EMLogger(logLevel: configuration.logLevel) }
+    )
     
     delay = configuration.delay
 
