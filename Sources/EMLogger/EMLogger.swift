@@ -8,6 +8,7 @@ public struct EMLogger: LogHandler {
   /// - Note: These metadata should be merged to the ones related to the single log.
   public var metadata: Logger.Metadata = [:]
   
+  /// The current date where the date is in short form, and time is in medium form.
   private var prettyDate: String {
     let dateFormatter = DateFormatter()
     dateFormatter.timeStyle = .medium
@@ -19,9 +20,7 @@ public struct EMLogger: LogHandler {
     self.logLevel = logLevel.swiftLogLevel
   }
   
-  /// This method is called when a `LogHandler` must emit a log message. There is no need for the `LogHandler` to
-  /// check if the `level` is above or below the configured `logLevel` as `Logger` already performed this check and
-  /// determined that a message should be logged.
+  /// This method is called when a `LogHandler` must emit a log message. 
   ///
   /// - parameters:
   ///     - level: The log level the message was logged at.
