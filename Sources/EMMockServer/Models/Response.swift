@@ -17,7 +17,12 @@ extension MockServer {
     /// The kind or file extension will automatically set the value for `Content-Type` in the headers, and will override any passed value in the headers section.
     /// Whenever the status code does not support a body, like `HTTPResponseStatus.noContent`, This `kind` will be set to `empty`.
     public let kind: Kind
-
+    
+    /// The delay to apply between the request and the returned response.
+    ///
+    /// If this value is nil, the value inside ``ServerConfigurationProvider`` is used.
+    /// If this value is set, it overrides the value of the delay inside the server configuration.
+    public let delay: TimeInterval?
     
     /// Returns an instance of `RequestedResponse`
     /// - Parameters:
@@ -27,9 +32,11 @@ extension MockServer {
     public init(
       status: HTTPResponseStatus = .ok,
       headers: HTTPHeaders = [:],
-      kind: Kind = .empty
+      kind: Kind = .empty,
+      delay: TimeInterval? = nil
     ) {
       self.status = status
+      self.delay = delay
       self.kind = status.mayHaveResponseBody ? kind : .empty
       
       switch kind {

@@ -16,6 +16,9 @@ public class MockServer {
   /// The amount of time (in seconds) the server has to wait before returning a response.
   internal private(set) var delay: TimeInterval = 0
   
+  /// A dictionary to track the requests made to the server and how many was each made.
+  internal private(set) var requestsTracker: [Request: Int] = [:]
+  
   /// The host associated with the running instance's configuration.
   internal var host: String? {
     vaporApplication?.http.server.configuration.hostname
@@ -123,13 +126,17 @@ public class MockServer {
     // The bytes to return with the response.
     let byteBuffer: ByteBuffer?
     
+    // The number of times this request has been made
+    let requestNumber = (requestsTracker[networkExchange.request] ?? 0)
+    let responseIndex = min(requestNumber, networkExchange.response.count - 1)
+    
     if #unavailable(macOS 13), #unavailable(iOS 16.0) {
-      try? await Task.sleep(nanoseconds: UInt64((networkExchange.delay ?? delay) * 1_000_000_000))
+      try? await Task.sleep(nanoseconds: UInt64((networkExchange.response[responseIndex].delay ?? delay) * 1_000_000_000))
     } else {
-      try? await Task.sleep(for: .seconds(networkExchange.delay ?? delay))
+      try? await Task.sleep(for: .seconds(networkExchange.response[responseIndex].delay ?? delay))
     }
     
-    switch networkExchange.response.kind {
+    switch networkExchange.response[responseIndex].kind {
       case .empty:
         byteBuffer = nil
         
@@ -144,7 +151,7 @@ public class MockServer {
           // If we fail to encode the data, we just throw a server error.
           return ClientResponse(
             status: .internalServerError,
-            headers: networkExchange.response.headers.removing(name: "Content-Type"),
+            headers: networkExchange.response[responseIndex].headers.removing(name: "Content-Type"),
             body: nil
           )
         }
@@ -156,7 +163,7 @@ public class MockServer {
         guard let content = try? await request.fileio.collectFile(at: pathToFile).get() else {
           return ClientResponse(
             status: .notFound,
-            headers: networkExchange.response.headers.removing(name: "Content-Type"),
+            headers: networkExchange.response[responseIndex].headers.removing(name: "Content-Type"),
             body: nil
           )
         }
@@ -165,10 +172,12 @@ public class MockServer {
     }
     
     let clientResponse = ClientResponse(
-      status: networkExchange.response.status,
-      headers: networkExchange.response.headers,
+      status: networkExchange.response[responseIndex].status,
+      headers: networkExchange.response[responseIndex].headers,
       body: byteBuffer
     )
+    
+    requestsTracker[networkExchange.request] = (requestsTracker[networkExchange.request] ?? 0) + 1
     
     return clientResponse
   }

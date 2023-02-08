@@ -6,7 +6,7 @@ extension MockServer {
   /// The request is composed of:
   /// - an `HTTPMethod`
   /// - a path that the request responds to.
-  public struct Request {
+  public struct Request: Hashable {
     /// The `HTTPMethod` of the request.
     public let method: HTTPMethod
     
@@ -49,3 +49,5 @@ extension MockServer {
     }
   }
 }
+
+extension HTTPMethod: Hashable {}
