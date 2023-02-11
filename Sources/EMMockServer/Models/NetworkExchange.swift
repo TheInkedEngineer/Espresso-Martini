@@ -7,13 +7,21 @@ extension MockServer {
     public let request: Request
     
     /// A `MockServer.Response` object.
-    public let response: Response
+    public let response: [Response]
     
     /// The delay to apply between the request and the returned response.
     ///
     /// If this value is nil, the value inside ``ServerConfigurationProvider`` is used.
     /// If this value is set, it overrides the value of the delay inside the server configuration.
-    public let delay: TimeInterval?
+    @available(
+      *,
+      unavailable,
+      message: """
+        This value is no longer needed. It has been moved inside of `MockServer.Response`.
+        The original initialiser won't be affected" as it injects it from this level to the `MockServer.Response.delay`.
+        """
+    )
+    public let delay: TimeInterval? = nil
     
     /// Creates a `NetworkExchange` object.
     /// - Parameters:
@@ -21,19 +29,36 @@ extension MockServer {
     ///   - response: A `MockServer.Response` object.
     ///   - delay: The delay to apply between the request and the returned response.
     public init(request: MockServer.Request, response: MockServer.Response, delay: TimeInterval? = nil) {
+      let response = MockServer.Response(
+        status: response.status,
+        headers: response.headers,
+        kind: response.kind,
+        delay: delay
+      )
+      
+      self.init(request: request, response: [response])
+    }
+    
+    /// Creates a `NetworkExchange` object.
+    /// - Parameters:
+    ///   - request: A `MockServer.Request` object.
+    ///   - response: An array of `MockServer.Response` object.
+    ///   - delay: The delay to apply between the request and the returned response.
+    public init(request: MockServer.Request, response: [MockServer.Response]) {
       self.request = request
       self.response = response
-      self.delay = delay
     }
     
     /// Pretty prints the information of the network exchange.
     public func prettyPrint(verbose: Bool) {
       print("\(request.method.rawValue) -- \(request.pathAsString)")
       if verbose {
-        print("|-- Expected Status Code: \(response.status.code)")
-        print("|-- Expected Headers: \(response.headers)")
-        print("|-- Expected Response kind: \(response.kind)")
-        print("")
+        response.forEach {
+          print("|-- Expected Status Code: \($0.status.code)")
+          print("|-- Expected Headers: \($0.headers)")
+          print("|-- Expected Response kind: \($0.kind)")
+          print("")
+        }
       }
     }
   }

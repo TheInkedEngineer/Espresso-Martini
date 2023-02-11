@@ -1,4 +1,11 @@
-{
-  "status_code": 400,
-  "response_file": "error.json"
-}
+[
+  {
+    "status_code": 400,
+    "response_file": "error.json",
+    "delay": 2
+  },
+  {
+    "status_code": 201,
+    "response_file": "response.json"
+  }
+]

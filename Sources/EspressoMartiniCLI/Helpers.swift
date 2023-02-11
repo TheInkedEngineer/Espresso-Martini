@@ -37,14 +37,19 @@ enum Helpers {
       return MockServer.NetworkExchange(request: generateRequest(at: url, relativeTo: baseFolderName), response: MockServer.Response())
     }
     
-    guard let configuration = try? decoder.decode(NetworkExchangeConfiguration.self, from: configurationData) else {
+    let configuration: [NetworkExchangeConfiguration]
+    
+    if let decodedObject = try? decoder.decode(NetworkExchangeConfiguration.self, from: configurationData) {
+      configuration = [decodedObject]
+    } else if let decodedArray = try? decoder.decode([NetworkExchangeConfiguration].self, from: configurationData) {
+      configuration = decodedArray
+    } else {
       throw ValidationError("Configuration file at: \(configurationURL.relativePath) is invalid.")
     }
     
     return MockServer.NetworkExchange(
       request: generateRequest(at: url, relativeTo: baseFolderName),
-      response: try generateResponse(at: url, from: configuration),
-      delay: configuration.delay
+      response: try generateResponse(at: url, from: configuration)
     )
   }
   
@@ -57,26 +62,34 @@ enum Helpers {
   }
   
   /// Generates the `MockServer.Response` from the configuration.
-  private static func generateResponse(at url: URL, from configuration: NetworkExchangeConfiguration) throws -> MockServer.Response {
-    if let responseFile = configuration.responseFile {
-      let responseFilePath = url.appendingPathComponent("\(responseFile)")
-      
-      guard FileManager.default.fileExists(atPath: responseFilePath.relativePath) else {
-        throw ValidationError("Missing file at: \(responseFilePath.relativePath).")
+  private static func generateResponse(at url: URL, from configuration: [NetworkExchangeConfiguration]) throws -> [MockServer.Response] {
+    try configuration.reduce(into: [MockServer.Response]()) { responses, configuration in
+      if let responseFile = configuration.responseFile {
+        let responseFilePath = url.appendingPathComponent("\(responseFile)")
+        
+        guard FileManager.default.fileExists(atPath: responseFilePath.relativePath) else {
+          throw ValidationError("Missing file at: \(responseFilePath.relativePath).")
+        }
+        
+        responses.append(
+          MockServer.Response(
+            status: HTTPResponseStatus(statusCode: configuration.statusCode),
+            headers: HTTPHeaders(configuration.unwrappedHeaders.map {($0.key, $0.value)}),
+            kind: .fileContent(pathToFile: url.appending(responseFile).relativePath),
+            delay: configuration.delay
+          )
+        )
+      } else {
+        responses.append(
+          MockServer.Response(
+            status: HTTPResponseStatus(statusCode: configuration.statusCode),
+            headers: HTTPHeaders(configuration.unwrappedHeaders.map {($0.key, $0.value)}),
+            kind: .empty,
+            delay: configuration.delay
+          )
+        )
       }
-      
-      return MockServer.Response(
-        status: HTTPResponseStatus(statusCode: configuration.statusCode),
-        headers: HTTPHeaders(configuration.unwrappedHeaders.map {($0.key, $0.value)}),
-        kind: .fileContent(pathToFile: url.appending(responseFile).relativePath)
-      )
     }
-    
-    return MockServer.Response(
-      status: HTTPResponseStatus(statusCode: configuration.statusCode),
-      headers: HTTPHeaders(configuration.unwrappedHeaders.map {($0.key, $0.value)}),
-      kind: .empty
-    )
   }
   
   /// Generates the `Path` for the request from the URL following the conventions:
