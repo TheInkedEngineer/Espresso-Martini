@@ -15,7 +15,7 @@ extension MockServer {
     /// If this value is set, it overrides the value of the delay inside the server configuration.
     @available(
       *,
-      deprecated,
+      unavailable,
       message: """
         This value is no longer needed. It has been moved inside of `MockServer.Response`.
         The original initialiser won't be affected" as it injects it from this level to the `MockServer.Response.delay`.
