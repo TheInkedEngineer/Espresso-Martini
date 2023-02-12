@@ -48,18 +48,5 @@ extension MockServer {
       self.request = request
       self.response = response
     }
-    
-    /// Pretty prints the information of the network exchange.
-    public func prettyPrint(verbose: Bool) {
-      print("\(request.method.rawValue) -- \(request.pathAsString)")
-      if verbose {
-        response.forEach {
-          print("|-- Expected Status Code: \($0.status.code)")
-          print("|-- Expected Headers: \($0.headers)")
-          print("|-- Expected Response kind: \($0.kind)")
-          print("")
-        }
-      }
-    }
   }
 }
