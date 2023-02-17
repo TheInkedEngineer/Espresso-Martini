@@ -1,3 +1,4 @@
+import EMLogger
 import Foundation
 
 extension MockServer {
@@ -8,19 +9,22 @@ extension MockServer {
     public let hostname: String
     public let port: Int
     public let delay: TimeInterval
+    public let logLevel: EMLogger.Level
     
     public init(
       networkExchanges: [EMMockServer.MockServer.NetworkExchange],
       environment: MockServer.Environment,
       hostname: String,
       port: Int,
-      delay: TimeInterval
+      delay: TimeInterval,
+      logLevel: EMLogger.Level
     ) {
       self.networkExchanges = networkExchanges
       self.environment = environment
       self.hostname = hostname
       self.port = port
       self.delay = delay
+      self.logLevel = logLevel
     }
   }
   

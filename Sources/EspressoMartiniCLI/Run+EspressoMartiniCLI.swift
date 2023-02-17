@@ -1,5 +1,6 @@
 import ArgumentParser
 import EMMockServer
+import EMLogger
 import Foundation
 
 extension EspressoMartiniCLI {
@@ -38,7 +39,8 @@ extension EspressoMartiniCLI {
           environment: configuration.environment,
           hostname: configuration.hostname,
           port: configuration.port,
-          delay: configuration.delay
+          delay: configuration.delay,
+          logLevel: configuration.logLevel
         )
       } else {
         mockServerConfiguration = MockServer.SimpleConfiguration(networkExchanges: try networkExchanges())
@@ -81,12 +83,14 @@ private struct ServerConfiguration: Decodable {
   let hostname: String
   let port: Int
   let delay: TimeInterval
+  let logLevel: EMLogger.Level
   
   enum CodingKeys: CodingKey {
     case environment
     case hostname
     case port
     case delay
+    case logLevel
   }
   
   init(from decoder: Decoder) throws {
@@ -95,5 +99,6 @@ private struct ServerConfiguration: Decodable {
     self.hostname = try container.decode(String.self, forKey: .hostname)
     self.port = try container.decode(Int.self, forKey: .port)
     self.delay = try container.decodeIfPresent(TimeInterval.self, forKey: .delay) ?? 0
+    self.logLevel = try container.decodeIfPresent(EMLogger.Level.self, forKey: .logLevel) ?? .info
   }
 }
