@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file. To know better on how to write and maintain a changelog, refer to [this link](https://keepachangelog.com/en/1.0.0/).
 Releases will be named after famous illusionists.
 
+## [1.2.0] - Harry Houdini
+
+### Added
+- Support for `retries` and `polling` by associating an array of answers to the single request. [#13](https://github.com/TheInkedEngineer/Espresso-Martini/pull/13)
+- A new printing layout for CLI's `endpoints` command.[#14](https://github.com/TheInkedEngineer/Espresso-Martini/pull/14)
+
+### Deprecated
+- `delay` under `MockServer.NetworkExchange` has been moved under `MockServer.Response` to allow each response to decide how long it should take before it's returned.
+
+### Removed
+- `--verbose` flag as it was redundant with the new printing layout.[#14](https://github.com/TheInkedEngineer/Espresso-Martini/pull/14)
+
 ## [1.1.0] - Harry Houdini
 
 ### Added

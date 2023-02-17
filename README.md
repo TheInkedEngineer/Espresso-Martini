@@ -30,10 +30,9 @@ The library is fully tested and documented.
 - [x] Add support for a global delay
 - [x] Add support for a delay on a per `networkExchange` basis
 - [x] Add a CLI
-- [ ] Add possibility to fetch the list of all corrupted endpoints
-- [ ] Add possibility to fetch why an endpoint is corrupted
+- [x] Add support for retry-able request
+- [x] Add support for polling requests
 - [ ] Add support for customised response based on query parameters
-- [ ] Add support for retry-able request
 
 # 3. Installation
 
@@ -81,27 +80,8 @@ targets: [
 
 # 4. Documentation
 
-The code for `Espresso-Martini` is fully documented. An DocC documentation will follow :).
+[Here](DOCUMENTATION.md) is a dedicated markdown file containing the documentation.
 
-# 5. How to use
-
-## As in-app package
-
-- Start by importing the mock server using `import EMMockServer`
-- Configure the mock server, either by using `SimpleConfigurationProvider` or creating your custom implementation of `ServerConfigurationProvider`
-- call `run()`
-
-> NOTE: When using with a sandboxed `macOS` application make sure the networking entitlements are turned on.
-
-## CLI
-
-- `espressomartini run` -- Runs the server with the list of all network exchanges.
-  - `--configuration <file>` argument points to the name of the configuration file.
-  - `--requests-folder <folder>` argument points to the name of the folder where the request reside. Defaults to `networkExchanges`.
-- `espressomartini endpoints` -- Fetches the list of all the endpoints
-  - `--requests-folder <folder>` argument points to the name of the folder where the request reside. Defaults to `networkExchanges`. 
-  - `--verbose` flag add details around the response to the list of endpoints
-
-# 6. Contribution
+# 5. Contribution
 
 **Working on your first Pull Request?** You can learn how from this *free* series [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
