@@ -18,8 +18,10 @@ extension EspressoMartiniCLI {
     
     func run() throws {
       let baseFolderURL = URL(string: FileManager.default.currentDirectoryPath)!.appending(baseFolder)
-      
-      let networkExchanges = try Helpers.generateEndpoints(from: baseFolderURL, networkExchangesFolder: baseFolder)
+      // Cleanup dir name. Example: somefolder/example-network-exchanges/ -> example-network-exchanges
+      let cleanedBaseFolderName = String(baseFolder.split(separator: "/").last!)
+        
+      let networkExchanges = try Helpers.generateEndpoints(from: baseFolderURL, networkExchangesFolder: cleanedBaseFolderName)
       let groupedNetworkExchanges = Dictionary(grouping: networkExchanges, by: {$0.request.pathAsString})
       groupedNetworkExchanges.forEach {
         print("Endpoint: \($0.key)")
