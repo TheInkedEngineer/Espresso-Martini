@@ -59,11 +59,11 @@ public class MockServer {
     vaporApplication?.http.server.configuration.port = configuration.port
     vaporApplication?.http.server.configuration.hostname = configuration.hostname
     vaporApplication?.logger = Logger(
-      label: "com.theinkedengineer.com",
+      label: "com.theinkedengineer.logger",
       factory: { _ in EMLogger(logLevel: configuration.logLevel) }
     )
     vaporApplication?.http.server.configuration.logger = Logger(
-      label: "com.theinkedengineer.com",
+      label: "com.theinkedengineer.logger",
       factory: { _ in EMLogger(logLevel: configuration.logLevel) }
     )
     
