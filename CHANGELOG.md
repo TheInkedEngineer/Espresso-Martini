@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file. To know better on how to write and maintain a changelog, refer to [this link](https://keepachangelog.com/en/1.0.0/).
 Releases will be named after famous illusionists.
 
+## [1.2.1] - Chris Angel
+
+### Fixed
+- Custom network exchanges folder name not correctly parsed when it's a path by [Vathsav](https://github.com/vathsav). [#15](https://github.com/TheInkedEngineer/Espresso-Martini/pull/15)
+- The Logger label.
+- Compiling issues for iOS versions prior to iOS15.
+
 ## [1.2.0] - Harry Houdini
 
 ### Added
