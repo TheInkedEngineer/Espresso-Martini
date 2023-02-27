@@ -13,7 +13,11 @@ public struct EMLogger: LogHandler {
     let dateFormatter = DateFormatter()
     dateFormatter.timeStyle = .medium
     dateFormatter.dateStyle = .short
-    return dateFormatter.string(from: .now)
+    if #available(iOS 15, *) {
+      return dateFormatter.string(from: .now)
+    } else {
+      return dateFormatter.string(from: Date())
+    }
   }
   
   public init(logLevel: EMLogger.Level) {
